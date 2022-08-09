@@ -1,5 +1,5 @@
 import './App.css';
-import {NavLink, Route, Routes} from 'react-router-dom'
+import {Route, Routes, Navigate} from 'react-router-dom'
 import {HomePage} from './pages/HomePage'
 import {AboutPage} from "./pages/AboutPage";
 import {BlogPage} from "./pages/BlogPage";
@@ -8,24 +8,37 @@ import {Layout} from "./components/Layout";
 import {SinglePage} from "./pages/SinglePage";
 import CreatePost from "./pages/CreatePost";
 import EditPost from "./pages/EditPost";
+import {LoginPage} from "./pages/LoginPage";
+import RequireAuth from "./hoc/RequireAuth";
+import {AuthProvider} from "./hoc/AuthProvider";
 
 function App() {
     return (
         <>
-            {/*Вложенные элементы*/}
-            {/*Общая обертка будет отрисосываться всегда (Layout). Она предоставляет placeholder Outlet,*/}
-            {/*куда и будет отрисовываться все содержимое*/}
-            <Routes>
-                <Route path='/' element={<Layout/>}>
-                    <Route index element={<HomePage/>}/>
-                    <Route path='about' element={<AboutPage/>}/>
-                    <Route path='posts' element={<BlogPage/>}/>
-                    <Route path='posts/:id' element={<SinglePage/>}/>
-                    <Route path='posts/:id/edit' element={<EditPost/>}/>
-                    <Route path='posts/new' element={<CreatePost/>}/>
-                    <Route path='*' element={<NotFoundPage/>}/>
-                </Route>
-            </Routes>
+            <AuthProvider>
+                {/*Вложенные элементы*/}
+                {/*Общая обертка будет отрисосываться всегда (Layout). Она предоставляет placeholder Outlet,*/}
+                {/*куда и будет отрисовываться все содержимое*/}
+                <Routes>
+                    <Route path='/' element={<Layout/>}>
+                        <Route index element={<HomePage/>}/>
+                        <Route path='about' element={<AboutPage/>}/>
+                        <Route path='about-us' element={<Navigate to='/about' replace/>}/>
+                        <Route path='posts' element={<BlogPage/>}/>
+                        <Route path='posts/:id' element={<SinglePage/>}/>
+                        <Route path='posts/:id/edit' element={<EditPost/>}/>
+                        <Route path='posts/new' element={
+                            //при переходе на 'posts/new' сначала попадем в ХОК,
+                            //затем проверим если мы авторизированны, то попадем в children
+                            <RequireAuth>
+                                <CreatePost/>
+                            </RequireAuth>
+                        }/>
+                        <Route path='login' element={<LoginPage/>}/>
+                        <Route path='*' element={<NotFoundPage/>}/>
+                    </Route>
+                </Routes>
+            </AuthProvider>
         </>
     );
 }
