@@ -1,25 +1,33 @@
-import logo from './logo.svg';
 import './App.css';
+import {NavLink, Route, Routes} from 'react-router-dom'
+import {HomePage} from './pages/HomePage'
+import {AboutPage} from "./pages/AboutPage";
+import {BlogPage} from "./pages/BlogPage";
+import {NotFoundPage} from "./pages/NotFoundPage";
+import {Layout} from "./components/Layout";
+import {SinglePage} from "./pages/SinglePage";
+import CreatePost from "./pages/CreatePost";
+import EditPost from "./pages/EditPost";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <>
+            {/*Вложенные элементы*/}
+            {/*Общая обертка будет отрисосываться всегда (Layout). Она предоставляет placeholder Outlet,*/}
+            {/*куда и будет отрисовываться все содержимое*/}
+            <Routes>
+                <Route path='/' element={<Layout/>}>
+                    <Route index element={<HomePage/>}/>
+                    <Route path='about' element={<AboutPage/>}/>
+                    <Route path='posts' element={<BlogPage/>}/>
+                    <Route path='posts/:id' element={<SinglePage/>}/>
+                    <Route path='posts/:id/edit' element={<EditPost/>}/>
+                    <Route path='posts/new' element={<CreatePost/>}/>
+                    <Route path='*' element={<NotFoundPage/>}/>
+                </Route>
+            </Routes>
+        </>
+    );
 }
 
 export default App;
